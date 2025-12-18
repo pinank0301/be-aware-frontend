@@ -17,17 +17,14 @@ export function About() {
                         </p>
                     </div>
                 </div>
+            </div>
 
-                <div className="relative w-full flex justify-center">
-                    <div className="w-full max-w-5xl overflow-hidden rounded-xl shadow-2xl bg-white">
-                        {/* Using w-full and h-auto to ensure the image fits the screen width and maintains aspect ratio without cropping */}
-                        <img
-                            src="/banner.png"
-                            alt="BeAware Community"
-                            className="w-full h-auto block"
-                        />
-                    </div>
-                </div>
+            <div className="w-full mt-12">
+                <img
+                    src="/banner.png"
+                    alt="BeAware Community"
+                    className="w-full h-auto object-cover"
+                />
             </div>
         </section>
     )
