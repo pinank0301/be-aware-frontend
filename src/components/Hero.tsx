@@ -1,8 +1,42 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ShieldCheck, Zap, Lock, Search } from "lucide-react"
+import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 
 export function Hero() {
+    const [url, setUrl] = useState("")
+    const [isLoading, setIsLoading] = useState(false)
+    const navigate = useNavigate()
+
+    const handleAnalyze = async () => {
+        if (!url) return;
+
+        setIsLoading(true);
+        try {
+            const response = await fetch("https://beaware-ai-backend-1.onrender.com/v1/api/url/check", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ url }),
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                navigate("/report", { state: { reportData: data.data } });
+            } else {
+                // Handle error (could add a toast here later)
+                console.error("Analysis failed:", data.message);
+            }
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
     return (
         <section id="home" className="relative overflow-hidden pt-20 pb-24 md:pt-32 md:pb-32">
             {/* Background Effects */}
@@ -33,10 +67,26 @@ export function Hero() {
                                 type="url"
                                 placeholder="Paste website URL to analyze (e.g., amazon-promo.com)"
                                 className="h-14 pl-12 text-lg border-transparent bg-transparent shadow-none focus-visible:ring-0 placeholder:text-muted-foreground/70"
+                                value={url}
+                                onChange={(e) => setUrl(e.target.value)}
+                                onKeyDown={(e) => e.key === "Enter" && handleAnalyze()}
+                                disabled={isLoading}
                             />
                         </div>
-                        <Button size="lg" className="h-14 px-8 text-lg rounded-xl shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all duration-300 cursor-pointer">
-                            Analyze Now
+                        <Button
+                            size="lg"
+                            className="h-14 px-8 text-lg rounded-xl shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all duration-300 cursor-pointer min-w-[160px]"
+                            onClick={handleAnalyze}
+                            disabled={isLoading}
+                        >
+                            {isLoading ? (
+                                <div className="flex items-center gap-2">
+                                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                                    <span>Analyzing...</span>
+                                </div>
+                            ) : (
+                                "Analyze Now"
+                            )}
                         </Button>
                     </div>
 

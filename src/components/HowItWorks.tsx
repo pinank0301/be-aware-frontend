@@ -50,7 +50,7 @@ export function HowItWorks() {
                             )}
 
                             <Card className="relative h-full border-none bg-background/50 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                                <CardHeader className="pb-4 items-center text-center">
+                                <CardHeader className="flex flex-col items-center justify-center pb-4 text-center">
                                     <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 shadow-inner">
                                         <step.icon className="h-8 w-8" />
                                     </div>
