@@ -27,6 +27,45 @@ export function Report() {
         });
     };
 
+    const getScoreColor = (score: number) => {
+        if (score >= 80) {
+            return {
+                text: "text-green-600",
+                bg: "bg-green-50/30 dark:bg-green-950/10",
+                border: "border-green-200 dark:border-green-900/20",
+                badge: "default" as const,
+                icon: "text-green-600",
+                alertBg: "bg-green-100 dark:bg-green-900/30",
+                alertText: "text-green-700 dark:text-green-400",
+                bar: "bg-green-500"
+            };
+        } else if (score >= 50) {
+            return {
+                text: "text-yellow-600",
+                bg: "bg-yellow-50/30 dark:bg-yellow-950/10",
+                border: "border-yellow-200 dark:border-yellow-900/20",
+                badge: "secondary" as const,
+                icon: "text-yellow-600",
+                alertBg: "bg-yellow-100 dark:bg-yellow-900/30",
+                alertText: "text-yellow-700 dark:text-yellow-400",
+                bar: "bg-yellow-500"
+            };
+        } else {
+            return {
+                text: "text-red-600",
+                bg: "bg-red-50/30 dark:bg-red-950/10",
+                border: "border-red-200 dark:border-red-900/20",
+                badge: "destructive" as const,
+                icon: "text-red-600",
+                alertBg: "bg-red-100 dark:bg-red-900/30",
+                alertText: "text-red-700 dark:text-red-400",
+                bar: "bg-red-500"
+            };
+        }
+    };
+
+    const colors = getScoreColor(data.trust_score);
+
     return (
         <div className="min-h-screen bg-background font-sans antialiased p-4 md:p-8">
             <div className="max-w-5xl mx-auto space-y-8">
@@ -44,52 +83,87 @@ export function Report() {
                 {/* Header Section */}
                 <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
                     <div>
-                        <h1 className="text-4xl font-extrabold tracking-tight">{data.details.hostname}</h1>
+                        <h1 className="text-4xl font-extrabold tracking-tight">{data.technical_details.hostname}</h1>
                         <p className="text-muted-foreground mt-2 text-lg">Comprehensive Security Analysis</p>
                     </div>
                     <div className="flex items-center gap-6 bg-card p-4 rounded-2xl border shadow-sm">
                         <div className="text-right">
                             <div className="text-sm text-muted-foreground font-medium uppercase tracking-wider">Trust Score</div>
-                            <div className="text-5xl font-black text-red-600">{data.summary.score}</div>
+                            <div className={`text-5xl font-black ${colors.text}`}>{data.trust_score}</div>
                         </div>
                         <div className="h-12 w-px bg-border" />
-                        <Badge variant="destructive" className="text-xl px-6 py-2 h-auto rounded-full">
-                            {data.summary.label}
+                        <Badge variant={colors.badge} className="text-xl px-6 py-2 h-auto rounded-full uppercase">
+                            {data.result}
                         </Badge>
                     </div>
                 </div>
 
                 {/* Summary Card */}
-                <Card className="border-red-200 bg-red-50/30 dark:bg-red-950/10 overflow-hidden shadow-lg animate-in fade-in slide-in-from-bottom-8 duration-700 delay-100">
-                    <div className="absolute top-0 left-0 w-1 h-full bg-red-500" />
+                <Card className={`${colors.border} ${colors.bg} overflow-hidden shadow-lg animate-in fade-in slide-in-from-bottom-8 duration-700 delay-100`}>
+                    <div className={`absolute top-0 left-0 w-1 h-full ${colors.bar}`} />
                     <CardHeader>
-                        <CardTitle className="flex items-center gap-2 text-red-700 dark:text-red-400 text-xl">
-                            <ShieldAlert className="h-6 w-6" />
-                            Security Assessment
+                        <CardTitle className={`flex items-center gap-2 ${colors.alertText} text-xl`}>
+                            {data.trust_score >= 80 ? <ShieldCheck className="h-6 w-6" /> : <ShieldAlert className="h-6 w-6" />}
+                            Key Findings
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-6">
-                        <p className="text-foreground/90 leading-relaxed text-lg">
-                            {data.summary.reasoning}
-                        </p>
-                        <div className="bg-background/50 p-6 rounded-xl border border-red-100 dark:border-red-900/20">
-                            <h4 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground mb-4">Critical Issues Detected</h4>
-                            <ul className="grid gap-3">
-                                {data.summary.key_issues.map((issue: string, index: number) => (
-                                    <li key={index} className="flex items-start gap-3 text-base">
-                                        <div className="mt-1 p-1 rounded-full bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400">
-                                            <AlertTriangle className="h-4 w-4" />
-                                        </div>
-                                        <span>{issue}</span>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
+                        <ul className="grid gap-3">
+                            {data.key_factors.map((factor: string, index: number) => (
+                                <li key={index} className="flex items-start gap-3 text-lg text-foreground/90">
+                                    <ShieldCheck className={`h-5 w-5 mt-1 flex-shrink-0 ${colors.icon}`} />
+                                    <span>{factor}</span>
+                                </li>
+                            ))}
+                        </ul>
+                        {data.warnings && data.warnings.length > 0 && (
+                            <div className={`bg-background/50 p-6 rounded-xl border ${colors.border}`}>
+                                <h4 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground mb-4">Detailed Insights</h4>
+                                <ul className="grid gap-3">
+                                    {data.warnings.map((warning: string, index: number) => (
+                                        <li key={index} className="flex items-start gap-3 text-base">
+                                            <div className={`mt-1 p-1 rounded-full ${colors.alertBg} ${colors.icon}`}>
+                                                <AlertTriangle className="h-4 w-4" />
+                                            </div>
+                                            <span>{warning}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
                     </CardContent>
                 </Card>
 
+                {/* Score Breakdown Section */}
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
+                    {Object.entries(data.score_breakdown).map(([key, value]: [string, any]) => (
+                        <Card key={key} className="shadow-md hover:shadow-lg transition-shadow border-l-4 overflow-hidden"
+                            style={{ borderLeftColor: value.score / value.max_score >= 0.8 ? '#22c55e' : (value.score / value.max_score >= 0.5 ? '#eab308' : '#ef4444') }}>
+                            <CardHeader className="pb-2">
+                                <CardTitle className="text-sm font-bold uppercase tracking-wider text-muted-foreground flex justify-between">
+                                    <span>{key.replace('_', ' ')}</span>
+                                    <span className="text-foreground">{value.score}/{value.max_score}</span>
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <p className="text-sm font-medium">{value.reason}</p>
+                                {value.warnings && value.warnings.length > 0 && (
+                                    <div className="mt-2 space-y-1">
+                                        {value.warnings.map((w: string, i: number) => (
+                                            <div key={i} className="text-xs text-red-500 flex items-start gap-1">
+                                                <AlertTriangle className="h-3 w-3 mt-0.5" />
+                                                <span>{w}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </CardContent>
+                        </Card>
+                    ))}
+                </div>
+
                 {/* Details Grid */}
-                <div className="grid gap-6 md:grid-cols-2 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
+                <div className="grid gap-6 md:grid-cols-2 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300">
                     {/* Domain Info */}
                     <Card className="shadow-md hover:shadow-lg transition-shadow">
                         <CardHeader>
@@ -102,17 +176,17 @@ export function Report() {
                             <div className="space-y-4">
                                 <div className="flex justify-between items-center border-b pb-2">
                                     <span className="text-muted-foreground">Registrar</span>
-                                    <span className="font-medium text-right max-w-[200px] truncate" title={data.details.whois.registrar}>
-                                        {data.details.whois.registrar || "N/A"}
+                                    <span className="font-medium text-right max-w-[200px] truncate" title={data.technical_details.whois.registrar}>
+                                        {data.technical_details.whois.registrar || "N/A"}
                                     </span>
                                 </div>
                                 <div className="flex justify-between items-center border-b pb-2">
                                     <span className="text-muted-foreground">Created On</span>
-                                    <span className="font-medium">{formatDate(data.details.whois.creationDate)}</span>
+                                    <span className="font-medium">{formatDate(data.technical_details.whois.creationDate)}</span>
                                 </div>
                                 <div className="flex justify-between items-center border-b pb-2">
                                     <span className="text-muted-foreground">Expires On</span>
-                                    <span className="font-medium">{formatDate(data.details.whois.expirationDate)}</span>
+                                    <span className="font-medium">{formatDate(data.technical_details.whois.expirationDate)}</span>
                                 </div>
                             </div>
                         </CardContent>
@@ -130,38 +204,60 @@ export function Report() {
                             <div className="flex items-center justify-between p-4 rounded-xl bg-muted/30 border">
                                 <div className="flex items-center gap-3">
                                     <Lock className="h-5 w-5 text-muted-foreground" />
-                                    <span className="font-medium">SSL Certificate</span>
+                                    <div className="flex flex-col">
+                                        <span className="font-medium">SSL Certificate</span>
+                                        <span className="text-xs text-muted-foreground">{data.technical_details.ssl.issuer.O}</span>
+                                    </div>
                                 </div>
-                                {data.details.ssl ? (
-                                    <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 px-3 py-1">Valid</Badge>
+                                {data.technical_details.ssl.valid ? (
+                                    <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 px-3 py-1">
+                                        {data.technical_details.ssl.daysRemaining} days left
+                                    </Badge>
                                 ) : (
-                                    <Badge variant="destructive" className="px-3 py-1">Missing</Badge>
+                                    <Badge variant="destructive" className="px-3 py-1">Invalid</Badge>
                                 )}
                             </div>
                             <div className="flex items-center justify-between p-4 rounded-xl bg-muted/30 border">
                                 <div className="flex items-center gap-3">
                                     <Server className="h-5 w-5 text-muted-foreground" />
-                                    <span className="font-medium">Hosting</span>
+                                    <div className="flex flex-col">
+                                        <span className="font-medium">Hosting</span>
+                                        <span className="text-xs text-muted-foreground">IP: {data.technical_details.hosting.ip}</span>
+                                    </div>
                                 </div>
-                                <div className="text-right">
-                                    {typeof data.details.hosting === 'object' && data.details.hosting !== null ? (
-                                        <div className="flex flex-col items-end">
-                                            <span className="text-sm font-medium">{data.details.hosting.ip || "N/A"}</span>
-                                            <span className="text-xs text-muted-foreground max-w-[200px] truncate" title={data.details.hosting.reverse}>
-                                                {data.details.hosting.reverse || ""}
-                                            </span>
-                                        </div>
-                                    ) : (
-                                        <span className="text-muted-foreground">{data.details.hosting || "Unknown"}</span>
-                                    )}
+                                <div className="text-right max-w-[150px]">
+                                    <span className="text-xs text-muted-foreground break-words" title={data.technical_details.hosting.reverse}>
+                                        {data.technical_details.hosting.reverse || "N/A"}
+                                    </span>
                                 </div>
                             </div>
                         </CardContent>
                     </Card>
                 </div>
 
+                {/* Screenshot Section */}
+                {data.technical_details.screenshot_available && data.technical_details.screenshot && (
+                    <Card className="shadow-md animate-in fade-in slide-in-from-bottom-8 duration-700 delay-400">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <Globe className="h-5 w-5 text-primary" />
+                                Website Screenshot
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="rounded-xl overflow-hidden border">
+                                <img
+                                    src={data.technical_details.screenshot.startsWith('data:') ? data.technical_details.screenshot : `data:image/jpeg;base64,${data.technical_details.screenshot}`}
+                                    alt="Website Screenshot"
+                                    className="w-full h-auto object-cover"
+                                />
+                            </div>
+                        </CardContent>
+                    </Card>
+                )}
+
                 {/* Raw Data Section */}
-                <Card className="shadow-md animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300">
+                <Card className="shadow-md animate-in fade-in slide-in-from-bottom-8 duration-700 delay-500">
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
                             <FileText className="h-5 w-5 text-primary" />
@@ -170,7 +266,7 @@ export function Report() {
                     </CardHeader>
                     <CardContent>
                         <div className="bg-muted/50 p-4 rounded-xl border font-mono text-xs md:text-sm overflow-x-auto max-h-[300px] overflow-y-auto whitespace-pre-wrap">
-                            {data.details.whois.raw || "No raw data available"}
+                            {data.technical_details.whois.raw || "No raw data available"}
                         </div>
                     </CardContent>
                 </Card>
