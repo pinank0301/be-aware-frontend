@@ -83,7 +83,7 @@ export function Report() {
                 {/* Header Section */}
                 <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
                     <div>
-                        <h1 className="text-4xl font-extrabold tracking-tight">{data.technical_details.hostname}</h1>
+                        <h1 className="text-4xl font-extrabold tracking-tight">{data.technical_details?.hostname}</h1>
                         <p className="text-muted-foreground mt-2 text-lg">Comprehensive Security Analysis</p>
                     </div>
                     <div className="flex items-center gap-6 bg-card p-4 rounded-2xl border shadow-sm">
@@ -109,7 +109,7 @@ export function Report() {
                     </CardHeader>
                     <CardContent className="space-y-6">
                         <ul className="grid gap-3">
-                            {data.key_factors.map((factor: string, index: number) => (
+                            {data.key_factors?.map((factor: string, index: number) => (
                                 <li key={index} className="flex items-start gap-3 text-lg text-foreground/90">
                                     <ShieldCheck className={`h-5 w-5 mt-1 flex-shrink-0 ${colors.icon}`} />
                                     <span>{factor}</span>
@@ -120,7 +120,7 @@ export function Report() {
                             <div className={`bg-background/50 p-6 rounded-xl border ${colors.border}`}>
                                 <h4 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground mb-4">Detailed Insights</h4>
                                 <ul className="grid gap-3">
-                                    {data.warnings.map((warning: string, index: number) => (
+                                    {data.warnings?.map((warning: string, index: number) => (
                                         <li key={index} className="flex items-start gap-3 text-base">
                                             <div className={`mt-1 p-1 rounded-full ${colors.alertBg} ${colors.icon}`}>
                                                 <AlertTriangle className="h-4 w-4" />
@@ -176,17 +176,17 @@ export function Report() {
                             <div className="space-y-4">
                                 <div className="flex justify-between items-center border-b pb-2">
                                     <span className="text-muted-foreground">Registrar</span>
-                                    <span className="font-medium text-right max-w-[200px] truncate" title={data.technical_details.whois.registrar}>
-                                        {data.technical_details.whois.registrar || "N/A"}
+                                    <span className="font-medium text-right max-w-[200px] truncate" title={data.technical_details?.whois?.registrar}>
+                                        {data.technical_details?.whois?.registrar || "N/A"}
                                     </span>
                                 </div>
                                 <div className="flex justify-between items-center border-b pb-2">
                                     <span className="text-muted-foreground">Created On</span>
-                                    <span className="font-medium">{formatDate(data.technical_details.whois.creationDate)}</span>
+                                    <span className="font-medium">{formatDate(data.technical_details?.whois?.creationDate)}</span>
                                 </div>
                                 <div className="flex justify-between items-center border-b pb-2">
                                     <span className="text-muted-foreground">Expires On</span>
-                                    <span className="font-medium">{formatDate(data.technical_details.whois.expirationDate)}</span>
+                                    <span className="font-medium">{formatDate(data.technical_details?.whois?.expirationDate)}</span>
                                 </div>
                             </div>
                         </CardContent>
@@ -206,12 +206,12 @@ export function Report() {
                                     <Lock className="h-5 w-5 text-muted-foreground" />
                                     <div className="flex flex-col">
                                         <span className="font-medium">SSL Certificate</span>
-                                        <span className="text-xs text-muted-foreground">{data.technical_details.ssl.issuer.O}</span>
+                                        <span className="text-xs text-muted-foreground">{data.technical_details?.ssl?.issuer?.O}</span>
                                     </div>
                                 </div>
-                                {data.technical_details.ssl.valid ? (
+                                {data.technical_details?.ssl?.valid ? (
                                     <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 px-3 py-1">
-                                        {data.technical_details.ssl.daysRemaining} days left
+                                        {data.technical_details?.ssl?.daysRemaining} days left
                                     </Badge>
                                 ) : (
                                     <Badge variant="destructive" className="px-3 py-1">Invalid</Badge>
@@ -222,12 +222,12 @@ export function Report() {
                                     <Server className="h-5 w-5 text-muted-foreground" />
                                     <div className="flex flex-col">
                                         <span className="font-medium">Hosting</span>
-                                        <span className="text-xs text-muted-foreground">IP: {data.technical_details.hosting.ip}</span>
+                                        <span className="text-xs text-muted-foreground">IP: {data.technical_details?.hosting?.ip}</span>
                                     </div>
                                 </div>
                                 <div className="text-right max-w-[150px]">
-                                    <span className="text-xs text-muted-foreground break-words" title={data.technical_details.hosting.reverse}>
-                                        {data.technical_details.hosting.reverse || "N/A"}
+                                    <span className="text-xs text-muted-foreground break-words" title={data.technical_details?.hosting?.reverse}>
+                                        {data.technical_details?.hosting?.reverse || "N/A"}
                                     </span>
                                 </div>
                             </div>
@@ -235,29 +235,8 @@ export function Report() {
                     </Card>
                 </div>
 
-                {/* Screenshot Section */}
-                {data.technical_details.screenshot_available && data.technical_details.screenshot && (
-                    <Card className="shadow-md animate-in fade-in slide-in-from-bottom-8 duration-700 delay-400">
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
-                                <Globe className="h-5 w-5 text-primary" />
-                                Website Screenshot
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="rounded-xl overflow-hidden border">
-                                <img
-                                    src={data.technical_details.screenshot.startsWith('data:') ? data.technical_details.screenshot : `data:image/jpeg;base64,${data.technical_details.screenshot}`}
-                                    alt="Website Screenshot"
-                                    className="w-full h-auto object-cover"
-                                />
-                            </div>
-                        </CardContent>
-                    </Card>
-                )}
-
                 {/* Raw Data Section */}
-                <Card className="shadow-md animate-in fade-in slide-in-from-bottom-8 duration-700 delay-500">
+                <Card className="shadow-md animate-in fade-in slide-in-from-bottom-8 duration-700 delay-400">
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
                             <FileText className="h-5 w-5 text-primary" />
@@ -266,11 +245,105 @@ export function Report() {
                     </CardHeader>
                     <CardContent>
                         <div className="bg-muted/50 p-4 rounded-xl border font-mono text-xs md:text-sm overflow-x-auto max-h-[300px] overflow-y-auto whitespace-pre-wrap">
-                            {data.technical_details.whois.raw || "No raw data available"}
+                            {data.technical_details?.whois?.raw || "No raw data available"}
                         </div>
                     </CardContent>
                 </Card>
 
+                {/* Brand Comparison & Screenshot Section */}
+                <div className="space-y-6 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-500 pb-12">
+                    <div className="flex items-center justify-between">
+                        <h2 className="text-2xl font-bold tracking-tight flex items-center gap-2">
+                            <Globe className="h-6 w-6 text-primary" />
+                            Visual Analysis & Comparison
+                        </h2>
+                        {data.technical_details?.legitimate_website && (
+                            <Badge variant="destructive" className="animate-pulse">
+                                Potential Impersonation Detected
+                            </Badge>
+                        )}
+                    </div>
+
+                    <div className={`grid gap-6 ${data.technical_details?.legitimate_website ? 'md:grid-cols-2' : 'grid-cols-1'}`}>
+                        {/* Analyzed Website (Potential Fake) */}
+                        <Card className="shadow-md overflow-hidden flex flex-col h-full border-t-4 border-t-red-500">
+                            <CardHeader className="bg-muted/30">
+                                <CardTitle className="text-sm font-bold uppercase tracking-wider flex justify-between items-center">
+                                    <span>Analyzed Website (Suspect Site)</span>
+                                    <Badge variant="outline" className="text-[10px] h-5">Analyzed</Badge>
+                                </CardTitle>
+                                <p className="text-xs text-muted-foreground truncate" title={data.technical_details?.url}>
+                                    {data.technical_details?.url}
+                                </p>
+                            </CardHeader>
+                            <CardContent className="p-0 flex-grow bg-muted/10 min-h-[350px] flex items-center justify-center">
+                                {(() => {
+                                    const screenshotUrl = data.technical_details?.screenshot_url;
+                                    const screenshotBase64 = data.technical_details?.screenshot;
+
+                                    let src = screenshotUrl;
+                                    if (!src && screenshotBase64) {
+                                        src = screenshotBase64.startsWith('data:')
+                                            ? screenshotBase64
+                                            : `data:image/jpeg;base64,${screenshotBase64}`;
+                                    }
+
+                                    if (src) {
+                                        return (
+                                            <div className="w-full h-full p-2">
+                                                <img
+                                                    src={src}
+                                                    alt="Analyzed Website Screenshot"
+                                                    className="w-full h-full object-contain max-h-[500px] rounded-lg shadow-md"
+                                                    loading="lazy"
+                                                />
+                                            </div>
+                                        );
+                                    }
+
+                                    return (
+                                        <div className="flex flex-col items-center justify-center p-12 text-muted-foreground italic text-center">
+                                            <ShieldAlert className="h-10 w-10 mb-4 opacity-20" />
+                                            <span>No image found for analyzed site</span>
+                                        </div>
+                                    );
+                                })()}
+                            </CardContent>
+                        </Card>
+
+                        {/* Legitimate Website (Original) */}
+                        {data.technical_details?.legitimate_website && (
+                            <Card className="shadow-md overflow-hidden flex flex-col h-full border-t-4 border-t-green-500">
+                                <CardHeader className="bg-muted/30">
+                                    <CardTitle className="text-sm font-bold uppercase tracking-wider flex justify-between items-center">
+                                        <span>Original {data.technical_details.legitimate_website.brand} Website</span>
+                                        <Badge variant="outline" className="text-[10px] h-5 bg-green-50 text-green-700 border-green-200">Official Brand</Badge>
+                                    </CardTitle>
+                                    <p className="text-xs text-muted-foreground truncate" title={data.technical_details.legitimate_website.url}>
+                                        {data.technical_details.legitimate_website.url}
+                                    </p>
+                                </CardHeader>
+                                <CardContent className="p-0 flex-grow bg-muted/10 min-h-[350px] flex items-center justify-center">
+                                    {data.technical_details.legitimate_website.screenshot_url ? (
+                                        <div className="w-full h-full p-2">
+                                            <img
+                                                src={data.technical_details.legitimate_website.screenshot_url}
+                                                alt={`Official ${data.technical_details.legitimate_website.brand} Screenshot`}
+                                                className="w-full h-full object-contain max-h-[500px] rounded-lg shadow-md"
+                                                loading="lazy"
+                                            />
+                                        </div>
+                                    ) : (
+                                        <div className="flex flex-col items-center justify-center p-12 text-muted-foreground italic text-center">
+                                            <ShieldCheck className="h-10 w-10 mb-4 opacity-20" />
+                                            <span>No legitimate screenshot available for comparison</span>
+                                        </div>
+                                    )}
+                                </CardContent>
+                            </Card>
+                        )}
+                    </div>
+                </div>
             </div>
         </div>
     )

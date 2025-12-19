@@ -20,7 +20,7 @@ export function Hero() {
 
         try {
             const response = await fetch(
-                "https://beaware-ai-backend-1.onrender.com/v1/api/url/check",
+                "http://localhost:8000/v1/api/url/check",
                 {
                     method: "POST",
                     headers: {
