@@ -13,7 +13,7 @@ export function Hero() {
     // 🔥 Automatically choose correct backend
     const API_BASE =
         import.meta.env.PROD
-            ? "https://be-aware-backend-ma9x.vercel.app"
+            ? "https://be-aware-backend-u1iy.onrender.com"
             : "http://localhost:8000"
 
     const handleAnalyze = async () => {
