@@ -20,7 +20,7 @@ export function Hero() {
 
         try {
             const response = await fetch(
-                "http://localhost:8000/v1/api/url/check",
+                "http://be-aware-backend-ma9x.vercel.app/v1/api/url/check",
                 {
                     method: "POST",
                     headers: {
