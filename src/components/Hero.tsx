@@ -10,6 +10,12 @@ export function Hero() {
     const [isLoading, setIsLoading] = useState(false)
     const navigate = useNavigate()
 
+    // 🔥 Automatically choose correct backend
+    const API_BASE =
+        import.meta.env.PROD
+            ? "https://be-aware-backend-ma9x.vercel.app"
+            : "http://localhost:8000"
+
     const handleAnalyze = async () => {
         if (!url.trim()) {
             toast.error("Please put a valid URL")
@@ -19,16 +25,13 @@ export function Hero() {
         setIsLoading(true)
 
         try {
-            const response = await fetch(
-                "https://be-aware-backend-ma9x.vercel.app/v1/api/url/check",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ url }),
-                }
-            )
+            const response = await fetch(`${API_BASE}/v1/api/url/check`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ url }),
+            })
 
             const data = await response.json()
 
@@ -39,13 +42,11 @@ export function Hero() {
 
                 let errorMessage = "Analysis failed"
 
-                // ✅ Correct error source handling
                 if (Array.isArray(data.errors) && data.errors.length > 0) {
-                    errorMessage = data.errors.map((err: { message: string }) => err.message).join(", ")
-                } else if (
-                    typeof data.message === "string" &&
-                    data.message.trim() !== ""
-                ) {
+                    errorMessage = data.errors
+                        .map((err: { message: string }) => err.message)
+                        .join(", ")
+                } else if (typeof data.message === "string" && data.message.trim() !== "") {
                     errorMessage = data.message
                 }
 
@@ -95,9 +96,7 @@ export function Hero() {
                                 className="h-14 pl-12 text-lg border-transparent bg-transparent shadow-none focus-visible:ring-0 placeholder:text-muted-foreground/70"
                                 value={url}
                                 onChange={(e) => setUrl(e.target.value)}
-                                onKeyDown={(e) =>
-                                    e.key === "Enter" && handleAnalyze()
-                                }
+                                onKeyDown={(e) => e.key === "Enter" && handleAnalyze()}
                                 disabled={isLoading}
                             />
                         </div>
