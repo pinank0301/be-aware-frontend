@@ -41,7 +41,7 @@ export function Hero() {
 
                 // ✅ Correct error source handling
                 if (Array.isArray(data.errors) && data.errors.length > 0) {
-                    errorMessage = data.errors.map(err => err.message).join(", ")
+                    errorMessage = data.errors.map((err: { message: string }) => err.message).join(", ")
                 } else if (
                     typeof data.message === "string" &&
                     data.message.trim() !== ""

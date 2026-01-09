@@ -10,8 +10,8 @@ export function HowItWorks() {
         },
         {
             icon: Server,
-            title: "2. Domain Analysis",
-            description: "We check domain age, registration details, and hosting reputation."
+            title: "2. Domain and Visual Analysis",
+            description: "We check design layout, domain age, registration details, and hosting reputation."
         },
         {
             icon: ShieldAlert,
